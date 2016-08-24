@@ -6,6 +6,7 @@ import math
 import history
 import db
 
+'''
 def simple_estimation(home_team, away_team, date, season=None, league=None):
 
     HISTORY_IN_WEEKS = 26
@@ -310,6 +311,38 @@ def poisson(home_team, away_team, date, season=None, league=None):
               '2': away_win_probability}
 
     return result
+'''
+
+def direct(home_team, away_team, date, season=None, league=None):
+    HISTORY_IN_WEEKS = 52
+
+    year, month, day = [int(d) for d in date.split('-')]
+    start = datetime.date(year, month, day) + datetime.timedelta(weeks=-HISTORY_IN_WEEKS)
+    start = start.strftime('%Y-%m-%d')
+
+    h_h1, h_hX, h_h2, h_h_count = history.get_full_time_home_match_percentages_of_team(home_team, league=league, season=None, start=start, end=date)
+    h_m1, h_mX, h_m2, h_m_count = history.get_full_time_match_percentages_of_team(home_team, league=league, season=None, start=start, end=date)
+    
+    a_a2, a_aX, a_a1, a_a_count = history.get_full_time_away_match_percentages_of_team(away_team, league=league, season=None, start=start, end=date)
+    a_m2, a_mX, a_m1, a_m_count = history.get_full_time_match_percentages_of_team(away_team, league=league, season=None, start=start, end=date)
+    
+    c1, cX, c2, c_count = history.get_full_time_1X2_percentages(league=league, start=start, end=date)
+
+    if h_h_count < 5 or a_a_count < 5 or h_m_count < 5 or a_m_count < 5:
+        return None
+
+    result = {}
+
+#    result['1'] = float(h_h1 + h_m1 + a_a1 + a_m1 + c1)/5
+#    result['X'] = float(h_hX + h_mX + a_aX + a_mX + cX)/5
+#    result['2'] = float(h_h2 + h_m2 + a_a2 + a_m2 + c2)/5
+    
+    result['1'] = float(h_h1 + h_m1 + a_a1 + a_m1 + c1)/5
+    result['X'] = float(h_hX + h_mX + a_aX + a_mX + cX)/5
+    result['2'] = float(h_h2 + h_m2 + a_a2 + a_m2 + c2)/5
+    
+    return result
+
 
 
 if __name__ == '__main__':

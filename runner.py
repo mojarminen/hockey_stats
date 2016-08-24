@@ -35,7 +35,7 @@ def play(initial_money, estimator, betting_strategy, league=None, season=None, s
         match['home_win_probability'] = estimation['1']
         match['draw_probability'] = estimation['X']
         match['away_win_probability'] = estimation['2']
-        
+
         # Set bets.
         match['bet_1'], match['bet_X'], match['bet_2'] = betting_strategy(money, estimation['1'], odds['home_win'], estimation['X'], odds['draw'], estimation['2'], odds['away_win'])
         
@@ -46,16 +46,16 @@ def play(initial_money, estimator, betting_strategy, league=None, season=None, s
         match['returning'] = match['returning'] - match['bet_1'] - match['bet_X'] - match['bet_2']
  
         # Collect.
-        if match['home_goals'] > match['away_goals'] and match['bet_1']:
+        if match['full_time_home_team_goals'] > match['full_time_away_team_goals'] and match['bet_1']:
             money += (odds['home_win'] * match['bet_1'])
             match['returning'] += (odds['home_win'] * match['bet_1'])
-        elif match['home_goals'] < match['away_goals'] and match['bet_2']:
+        elif match['full_time_home_team_goals'] < match['full_time_away_team_goals'] and match['bet_2']:
             money += (odds['away_win'] * match['bet_2'])
             match['returning'] += (odds['away_win'] * match['bet_2'])
-        elif match['home_goals'] == match['away_goals'] and match['bet_X']:
+        elif match['full_time_home_team_goals'] == match['full_time_away_team_goals'] and match['bet_X']:
             money += (odds['draw'] * match['bet_X'])
             match['returning'] += (odds['draw'] * match['bet_X'])
-        
+
     return money, matches
     
 if __name__ == '__main__':
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         
         for match in matches:
             csvwriter.writerow([match['date'], match['home_team'].encode('utf-8'), match['away_team'].encode('utf-8'), 
-                                match['home_goals'], match['away_goals'], 
+                                match['full_time_home_goals'], match['full_time_away_goals'], 
                                 match['home_win_probability'], match['draw_probability'], match['away_win_probability'],
                                 1/match['home_win_probability'] if match['home_win_probability'] else '', 1/match['draw_probability'] if match['draw_probability'] else '', 1/match['away_win_probability'] if match['away_win_probability'] else '',
                                 match['max_home_win_odd'], match['max_draw_odd'], match['max_away_win_odd'],
@@ -93,13 +93,14 @@ if __name__ == '__main__':
         print match
     '''
     
-    strategies = ((estimator.simple_estimation2, betting_strategy.div_100),
-                  (estimator.poisson, betting_strategy.div_100))
+    strategies = ((estimator.direct, betting_strategy.div_100),)
 
     results = []
     
     for get_estimations, get_bet in strategies:
-        if get_estimations == estimator.simple_estimation:
+        if get_estimations == estimator.direct:
+            print 'Direct estimation:'
+        elif get_estimations == estimator.simple_estimation:
             print 'My estimation:'
         elif get_estimations == estimator.simple_estimation2:
             print 'Next Generation Estimator:'
@@ -108,31 +109,11 @@ if __name__ == '__main__':
         else:
             raise Exception('unrecognised estimator')
         
-        winnings_veikkausliiga = 0
-        veikkausliiga_plus_minus = 0
-        for season in range(2006, 2017): 
-            print '\tVeikkausliiga ' + str(season) + ': ',
-            money_left, matches = play(INITIAL_MONEY, get_estimations, get_bet, league=u'Veikkausliiga', season=str(season))
+        winnings_khl = 0
+        for season in range(2009, 2017): 
+            print '\tKHL ' + str(season) + '-' + str(season+1) + ': ',
+            money_left, matches = play(INITIAL_MONEY, get_estimations, get_bet, league=u'KHL', season=str(season) + '-' + str(season+1))
             print money_left
-            winnings_veikkausliiga += (money_left - INITIAL_MONEY)
-        
-        winnings_ykkonen = 0
-        ykkonen_plus_minus = 0
-        for season in range(2006, 2017): 
-            print '\tYkkönen ' + str(season) + ': ',
-            money_left, matches = play(INITIAL_MONEY, get_estimations, get_bet, league=u'Ykkönen', season=str(season)) 
-            print money_left
-            winnings_ykkonen += (money_left - INITIAL_MONEY)
-    
-        winnings_premier_league = 0
-        premier_league_plus_minus = 0
-        for season in range(2006, 2016): 
-            print '\tPremier League ' + str(season) + '-' + str(int(season)+1) + ': ',
-            money_left, matches = play(INITIAL_MONEY, get_estimations, get_bet, league=u'Premier League', season=str(season) + '-' + str(season+1)) 
-            print money_left
-            winnings_premier_league += (money_left - INITIAL_MONEY)
-            if winnings_premier_league > 0:
-                premier_league_plus_minus += 1
-            else:
-                premier_league_plus_minus -= 1
+            winnings_khl += (money_left - INITIAL_MONEY)
+        print 'TOTAL:', winnings_khl
     
