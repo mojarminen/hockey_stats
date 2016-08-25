@@ -109,6 +109,14 @@ if __name__ == '__main__':
         else:
             raise Exception('unrecognised estimator')
         
+        winnings_liiga = 0
+        for season in range(2009, 2017): 
+            print '\tSM-LIIGA ' + str(season) + '-' + str(season+1) + ': ',
+            money_left, matches = play(INITIAL_MONEY, get_estimations, get_bet, league=u'SM-LIIGA', season=str(season) + '-' + str(season+1))
+            print money_left
+            winnings_liiga += (money_left - INITIAL_MONEY)
+        print 'TOTAL:', winnings_liiga
+
         winnings_khl = 0
         for season in range(2009, 2017): 
             print '\tKHL ' + str(season) + '-' + str(season+1) + ': ',
@@ -117,3 +125,4 @@ if __name__ == '__main__':
             winnings_khl += (money_left - INITIAL_MONEY)
         print 'TOTAL:', winnings_khl
     
+

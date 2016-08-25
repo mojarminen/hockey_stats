@@ -13,7 +13,41 @@ def kelly_div_10(all_money, probability, odd):
         result = 0
         
     return result
-        
+
+
+def always_bet_highest_odd_with_div_100(all_money, probability_1, odd_1, probability_X, odd_X, probability_2, odd_2):
+    if odd_1 > odd_X and odd_1 > odd_2:
+        return all_money*0.01, 0, 0
+    elif odd_2 > odd_X and odd_2 > odd_1:
+        return 0, 0, all_money*0.01
+    elif odd_X > odd_1 and odd_X > odd_2:
+        return 0, all_money*0.01, 0
+    else:
+        return 0,0,0
+    
+
+def always_bet_lowest_odd_with_div_100(all_money, probability_1, odd_1, probability_X, odd_X, probability_2, odd_2):
+    if odd_1 < odd_X and odd_1 < odd_2:
+        return all_money*0.01, 0, 0
+    elif odd_2 < odd_X and odd_2 < odd_1:
+        return 0, 0, all_money*0.01
+    elif odd_X < odd_1 and odd_X < odd_2:
+        return 0, all_money*0.01, 0
+    else:
+        return 0,0,0
+
+
+def bet_randomly(all_money, probability_1, odd_1, probability_X, odd_X, probability_2, odd_2):
+    import random
+    result = [0,0,0]
+    result[random.randint(0,3)] = all_money*0.01    
+    return result
+    
+
+def div_10(all_money, probability_1, odd_1, probability_X, odd_X, probability_2, odd_2):
+    result = div_100(all_money, probability_1, odd_1, probability_X, odd_X, probability_2, odd_2)
+
+    return result[0]*10, result[1]*10, result[2]*10
 
 def div_100(all_money, probability_1, odd_1, probability_X, odd_X, probability_2, odd_2):
     if odd_1 - 1/probability_1 > 0:

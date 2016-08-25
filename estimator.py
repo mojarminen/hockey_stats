@@ -6,7 +6,6 @@ import math
 import history
 import db
 
-'''
 def simple_estimation(home_team, away_team, date, season=None, league=None):
 
     HISTORY_IN_WEEKS = 26
@@ -19,9 +18,9 @@ def simple_estimation(home_team, away_team, date, season=None, league=None):
     
 #    h1, hX, h2, h_count = history.get_home_match_percentages_of_team(home_team, league=league, season=season, start=start, end=date)
 #    a2, aX, a1, a_count = history.get_away_match_percentages_of_team(away_team, league=league, season=season, start=start, end=date)
-    h1, hX, h2, h_count = history.get_home_match_percentages_of_team(home_team, league=league, season=None, start=start, end=date)
-    a2, aX, a1, a_count = history.get_away_match_percentages_of_team(away_team, league=league, season=None, start=start, end=date)
-    c1, cX, c2, c_count = history.get_1X2_percentages(league=league, start=start, end=date)
+    h1, hX, h2, h_count = history.get_full_time_home_match_percentages_of_team(home_team, league=league, season=None, start=start, end=date)
+    a2, aX, a1, a_count = history.get_full_time_away_match_percentages_of_team(away_team, league=league, season=None, start=start, end=date)
+    c1, cX, c2, c_count = history.get_full_time_1X2_percentages(league=league, start=start, end=date)
 
     if h_count < 5 or a_count < 5:
         return None
@@ -63,19 +62,19 @@ def simple_estimation2(home_team, away_team, date, season=None, league=None):
     for m in matches:
         if m['home_team'] == home_team:
             home_games += 1
-            if m['home_goals'] > m['away_goals']:
+            if m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 wins += 1
                 home_wins += 1
-            elif m['home_goals'] < m['away_goals']:
+            elif m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 losses += 1
                 home_losses += 1
             else:
                 draws += 1
                 home_draws += 1
         elif m['away_team'] == home_team:
-            if m['home_goals'] < m['away_goals']:
+            if m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 wins += 1
-            elif m['home_goals'] > m['away_goals']:
+            elif m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 losses += 1
             else:
                 draws += 1
@@ -109,18 +108,18 @@ def simple_estimation2(home_team, away_team, date, season=None, league=None):
 
     for m in matches:
         if m['home_team'] == away_team:
-            if m['home_goals'] > m['away_goals']:
+            if m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 wins += 1
-            elif m['home_goals'] < m['away_goals']:
+            elif m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 losses += 1
             else:
                 draws += 1
         elif m['away_team'] == away_team:
             away_games += 1
-            if m['home_goals'] < m['away_goals']:
+            if m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 wins += 1
                 away_wins += 1
-            elif m['home_goals'] > m['away_goals']:
+            elif m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 losses += 1
                 away_losses += 1
             else:
@@ -146,16 +145,16 @@ def simple_estimation2(home_team, away_team, date, season=None, league=None):
     losses = 0
     for m in matches:
         if m['home_team'] == home_team:
-            if m['home_goals'] > m['away_goals']:
+            if m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 wins += 1
-            elif m['home_goals'] < m['away_goals']:
+            elif m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 losses += 1
             else:
                 draws += 1
         elif m['away_team'] == home_team:
-            if m['home_goals'] < m['away_goals']:
+            if m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 wins += 1
-            elif m['home_goals'] > m['away_goals']:
+            elif m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 losses += 1
             else:
                 draws += 1
@@ -174,16 +173,16 @@ def simple_estimation2(home_team, away_team, date, season=None, league=None):
     losses = 0
     for m in matches:
         if m['home_team'] == away_team:
-            if m['home_goals'] > m['away_goals']:
+            if m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 wins += 1
-            elif m['home_goals'] < m['away_goals']:
+            elif m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 losses += 1
             else:
                 draws += 1
         elif m['away_team'] == away_team:
-            if m['home_goals'] < m['away_goals']:
+            if m['full_time_home_team_goals'] < m['full_time_away_team_goals']:
                 wins += 1
-            elif m['home_goals'] > m['away_goals']:
+            elif m['full_time_home_team_goals'] > m['full_time_away_team_goals']:
                 losses += 1
             else:
                 draws += 1
@@ -227,8 +226,8 @@ def poisson(home_team, away_team, date, season=None, league=None):
     home_goals = 0
     away_goals = 0
     for m in matches:
-        home_goals += m['home_goals']
-        away_goals += m['away_goals']
+        home_goals += m['full_time_home_team_goals']
+        away_goals += m['full_time_away_team_goals']
     average_goals_scored_at_home = float(home_goals)/len(matches)
     average_goals_scored_away = float(away_goals)/len(matches)
     average_goals_conceded_at_home = average_goals_scored_away
@@ -241,7 +240,7 @@ def poisson(home_team, away_team, date, season=None, league=None):
     number_of_matches = 0
     for m in matches:
         if m['home_team'] == home_team:
-            home_goals += m['home_goals']
+            home_goals += m['full_time_home_team_goals']
             number_of_matches += 1
     if number_of_matches == 0:
         return None
@@ -252,7 +251,7 @@ def poisson(home_team, away_team, date, season=None, league=None):
     number_of_matches = 0
     for m in matches:
         if m['away_team'] == away_team:
-            home_goals += m['home_goals']
+            home_goals += m['full_time_home_team_goals']
             number_of_matches += 1
     if number_of_matches == 0:
         return None
@@ -267,7 +266,7 @@ def poisson(home_team, away_team, date, season=None, league=None):
     number_of_matches = 0
     for m in matches:
         if m['away_team'] == away_team:
-            away_goals += m['away_goals']
+            away_goals += m['full_time_away_team_goals']
             number_of_matches += 1
     if number_of_matches == 0:
         return None
@@ -278,7 +277,7 @@ def poisson(home_team, away_team, date, season=None, league=None):
     number_of_matches = 0
     for m in matches:
         if m['home_team'] == home_team:
-            away_goals += m['away_goals']
+            away_goals += m['full_time_away_team_goals']
             number_of_matches += 1
     if number_of_matches == 0:
         return None
@@ -311,7 +310,7 @@ def poisson(home_team, away_team, date, season=None, league=None):
               '2': away_win_probability}
 
     return result
-'''
+
 
 def direct(home_team, away_team, date, season=None, league=None):
     HISTORY_IN_WEEKS = 52
