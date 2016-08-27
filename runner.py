@@ -93,7 +93,7 @@ if __name__ == '__main__':
         print match
     '''
     
-    strategies = ((estimator.direct, betting_strategy.div_100),)
+    strategies = ((estimator.direct, betting_strategy.bet_10),)
 
     results = []
     

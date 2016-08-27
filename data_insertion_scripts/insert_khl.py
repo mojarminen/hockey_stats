@@ -390,7 +390,7 @@ TEAM_ALIASES = {
     'MVD Balashikha': 'HC MVD',
     'Nizhny Novgorod': 'Torpedo Nizhny Novgorod',
     'Niznekamsk': 'Neftekhimik Nizhnekamsk',
-    'Podolsk': 'Vityaz Chekhov', # HC Vityaz
+    'Podolsk': 'Vityaz Podolsk',
     'Salavat Ufa': 'Salavat Yulaev Ufa',
     'SKA St. Petersburg': 'SKA Saint Petersburg',
     'Sochi': 'HC Sochi',
