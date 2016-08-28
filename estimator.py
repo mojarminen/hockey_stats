@@ -312,10 +312,40 @@ def poisson(home_team, away_team, date, season=None, league=None):
     return result
 
 
-def direct(home_team, away_team, date, season=None, league=None):
-    HISTORY_IN_WEEKS = 104
-    START_WEIGHT = 0.5
-    END_WEIGHT = 1.0
+HISTORY_IN_WEEKS = 104
+START_WEIGHT = 0.5
+END_WEIGHT = 1.0
+OVER_POWER_THRESHOLD = 1.5
+OVER_POWER_EXTRA = 0.07
+CLOSE_MATCH_THRESHOLD = 0.1
+CLOSE_MATCH_TRIM = 0.02
+def direct(home_team, away_team, date, season=None, league=None, 
+           history_in_weeks=None, start_weight=None, end_weight=None,
+           over_power_threshold=None, over_power_extra=None,
+           close_match_threshold=None, close_match_trim=None):
+    
+    global HISTORY_IN_WEEKS, START_WEIGHT, END_WEIGHT, OVER_POWER_THRESHOLD, OVER_POWER_EXTRA, CLOSE_MATCH_THRESHOLD, CLOSE_MATCH_TRIM
+    
+    if history_in_weeks:
+        HISTORY_IN_WEEKS = history_in_weeks
+    
+    if start_weight:
+        START_WEIGHT = start_weight
+        
+    if end_weight:
+        END_WEIGHT = end_weight
+
+    if over_power_threshold:
+        OVER_POWER_THRESHOLD = over_power_threshold
+        
+    if over_power_extra:
+        OVER_POWER_EXTRA = over_power_extra
+        
+    if close_match_threshold:
+        CLOSE_MATCH_THRESHOLD = close_match_threshold
+        
+    if close_match_trim:
+        CLOSE_MATCH_TRIM = close_match_trim
 
     year, month, day = [int(d) for d in date.split('-')]
     start = datetime.date(year, month, day) + datetime.timedelta(weeks=-HISTORY_IN_WEEKS)
@@ -337,6 +367,19 @@ def direct(home_team, away_team, date, season=None, league=None):
     result['1'] = float(h_h1 + h_m1 + a_a1 + a_m1 + c1)/5
     result['X'] = float(h_hX + h_mX + a_aX + a_mX + cX)/5
     result['2'] = float(h_h2 + h_m2 + a_a2 + a_m2 + c2)/5
+    
+    # Fix probabilities based on the nature of the game.
+    if result['1']/result['2'] > OVER_POWER_THRESHOLD:
+        result['1'] += OVER_POWER_EXTRA
+        result['2'] -= OVER_POWER_EXTRA
+    elif result['2']/result['1'] > OVER_POWER_THRESHOLD:
+        result['2'] += OVER_POWER_EXTRA
+        result['1'] -= OVER_POWER_EXTRA
+
+    if result['1']/result['2'] > (1-CLOSE_MATCH_THRESHOLD) and result['1']/result['2'] < (1+CLOSE_MATCH_THRESHOLD):
+        result['1'] -= CLOSE_MATCH_TRIM/2.
+        result['2'] -= CLOSE_MATCH_TRIM/2.
+        result['X'] += CLOSE_MATCH_TRIM
     
     return result
 

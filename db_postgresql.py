@@ -1,28 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import sqlite3
-from StringIO import StringIO
+import psycopg2
+import psycopg2.extensions
+# Get SQL-query results as unicode.
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+conn = psycopg2.connect(
+    "dbname='%s' user='%s' host='%s' password='%s'" % 
+    ('hockey', 'tunnus', 'localhost', 'salasana'))
 
-DB_FILE = 'hockey.db'
-conn = sqlite3.connect(DB_FILE)
 
-tempfile = StringIO()
-for line in conn.iterdump():
-    tempfile.write('%s\n' % line)
-conn.close()
-tempfile.seek(0)
-
-# Create a database in memory and import from tempfile
-conn = sqlite3.connect(":memory:")
-conn.cursor().executescript(tempfile.read())
-conn.commit()
-conn.row_factory = sqlite3.Row
-    
-    
 def get_match_1X2_odds(match_id):
     cur = conn.cursor()
     
-    cur.execute('''SELECT booker, home_win, draw, away_win FROM odds_1X2 WHERE match = ?''', (match_id,))
+    cur.execute('''SELECT booker, home_win, draw, away_win FROM odds_1X2 WHERE match = %s''', (match_id,))
     
     result = {}
     for row in cur.fetchall():
@@ -35,10 +25,10 @@ def get_match_1X2_odds(match_id):
     
     return result
     
+    
 def get_matches(team_id=None, home_team_id=None, away_team_id=None, 
                 league_id=None, season_id=None, # conference_id=None, division_id=None, 
                 start=None, end=None, cancelled=None, awarded=None):
-    
     if team_id is not None and type(team_id) is not int:
         raise Exception('Invalid type for team_id %s' % str(type(team_id)))
     if home_team_id is not None and type(home_team_id) is not int:
@@ -101,16 +91,16 @@ def get_matches(team_id=None, home_team_id=None, away_team_id=None,
         query += " AND match.date < '%s' " % end
     if cancelled is not None:
         if cancelled:
-            query += " AND match.cancelled = 1 "
+            query += " AND match.cancelled = TRUE "
         else:
-            query += " AND match.cancelled = 0 "
+            query += " AND match.cancelled = FALSE "
     if awarded is not None:
         if awarded:
-            query += " AND match.awarded = 1 "
+            query += " AND match.awarded = TRUE "
         else:
-            query += " AND match.awarded = 0 "
+            query += " AND match.awarded = FALSE "
             
-    query += " ORDER BY date "
+
     cur.execute(query)
     
     matches = []
@@ -138,61 +128,36 @@ def get_matches(team_id=None, home_team_id=None, away_team_id=None,
     return matches
 
 
-
-LEAGUE_IDS = {}
 def get_league_id(league):
-    global LEAGUE_IDS
-    
-    if league in LEAGUE_IDS:
-        return LEAGUE_IDS[league]
-    
     cur = conn.cursor()
-    cur.execute('''SELECT id FROM league WHERE title = ?''', (league,))
+    cur.execute('''SELECT id FROM league WHERE title = %s''', (league,))
     result = cur.fetchone()
     if not result:
         raise Exception("No league found '%s'" % team)
-        
-    LEAGUE_IDS[league] = result[0]
     return result[0]
     
 
-SEASON_IDS = {}
 def get_season_id(season):
-    global SEASON_IDS
-    
-    if season in SEASON_IDS:
-        return SEASON_IDS[season]
-    
     cur = conn.cursor()
-    cur.execute('''SELECT id FROM season WHERE title = ?''', (season,))
+    cur.execute('''SELECT id FROM season WHERE title = %s''', (season,))
     result = cur.fetchone()
     if not result:
         raise Exception("No season found '%s'" % season)
-    
-    SEASON_IDS[season] = result[0]
     return result[0]
     
 
-TEAM_IDS = {}
 def get_team_id(team):
-    global TEAM_IDS
-    
-    if team in TEAM_IDS:
-        return TEAM_IDS[team]
-    
     cur = conn.cursor()
-    cur.execute('''SELECT id FROM team WHERE title = ?''', (team,))
+    cur.execute('''SELECT id FROM team WHERE title = %s''', (team,))
     result = cur.fetchone()
     if not result:
         raise Exception("No team found '%s'" % team)
-    
-    TEAM_IDS[team] = result[0]
     return result[0]
 
 
 def get_team_name(team_id):
     cur = conn.cursor()
-    cur.execute('''SELECT title FROM team WHERE id = ?''', (team_id,))
+    cur.execute('''SELECT title FROM team WHERE id = %s''', (team_id,))
     result = cur.fetchone()
     if not result:
         raise Exception("No team found with id %s" % team)

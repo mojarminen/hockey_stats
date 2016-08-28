@@ -103,7 +103,6 @@ def get_n_previous_matches_of_team(team, date, count, league=None, season=None):
         
     matches = db.get_matches(team_id=team_id, end=date, league_id=league_id, season_id=season_id, cancelled=False, awarded=False)
     
-    matches = sorted(matches, key=lambda x: x['date'])
     matches.reverse()
     
     return matches[:min(count, len(matches))]
@@ -226,7 +225,7 @@ def get_full_time_match_percentages_of_team(team, league=None, season=None, star
         
         weight = start_weight
         
-        for row in sorted(matches, key=lambda x: x['date']):
+        for row in matches:
             home_team_id = row['home_team_id']
             away_team_id = row['away_team_id']
             full_time_home_team_goals = row['full_time_home_team_goals']
@@ -308,7 +307,7 @@ def get_full_time_home_match_percentages_of_team(team, league=None, season=None,
         
         weight = start_weight
         
-        for g in sorted(matches, key=lambda x: x['date']):
+        for g in matches:
             if g['full_time_home_team_goals'] > g['full_time_away_team_goals']:
                 wins += weight
             elif g['full_time_home_team_goals'] < g['full_time_away_team_goals']:
@@ -376,7 +375,7 @@ def get_full_time_away_match_percentages_of_team(team, league=None, season=None,
         
         weight = start_weight
         
-        for g in sorted(matches, key=lambda x: x['date']):
+        for g in matches:
             if g['full_time_home_team_goals'] < g['full_time_away_team_goals']:
                 wins += weight
             elif g['full_time_home_team_goals'] > g['full_time_away_team_goals']:
