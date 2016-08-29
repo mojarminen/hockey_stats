@@ -13,6 +13,297 @@ conn = sqlite3.connect(DB_FILE)
 
 TEAMS = {
     'SM-LIIGA': {
+        '1998-1999': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'KalPa': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '1999-2000': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2000-2001': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2001-2002': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2002-2003': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2003-2004': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2004-2005': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2005-2006': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2006-2007': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2007-2008': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2008-2009': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2009-2010': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2010-2011': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2011-2012': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
+        '2012-2013': {
+            'SM-LIIGA': {
+                'SM-LIIGA': {
+                    u'Kärpät': None,
+                    'Jokerit': None,
+                    u'Ässät': None,
+                    'Lukko': None,
+                    'TPS': None,
+                    'Blues': None,
+                    'HIFK': None,
+                    'HPK': None,
+                    'Pelicans': None,
+                    'Tappara': None,
+                    'Ilves': None,
+                    'KalPa': None,
+                    'SaiPa': None,
+                    'JYP': None,
+                }
+            }
+        },
         '2013-2014': {
             'SM-LIIGA': {
                 'SM-LIIGA': {

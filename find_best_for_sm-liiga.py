@@ -42,8 +42,8 @@ if __name__ == '__main__':
         
     INITIAL_MONEY = 1000
     
-    POPULATION_SIZE = 100
-    MUTATION_FREQUENCY = 20 # percentages of new objects mutated
+    POPULATION_SIZE = 4
+    MUTATION_FREQUENCY = 100 # percentages of new objects mutated
     
     ESTIMATOR = estimator_module.direct
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     population_number = 1
     while True:
-        print 'POPULATION', population_number
+        print 'SM-LIIGA POPULATION', population_number
     
         # Evaluate the population.
         for idx, elem in enumerate(population):
@@ -90,9 +90,9 @@ if __name__ == '__main__':
                 estimator_module.CLOSE_MATCH_TRIM = ukko['close_match_trim']
                 
                 winnings = []
-                for season in range(2009, 2016): 
-                    print '\tKHL ' + str(season) + '-' + str(season+1) + ': ',
-                    money_left, matches = runner.play(INITIAL_MONEY, ESTIMATOR, BETTING_STRATEGY, league=u'KHL', season=str(season) + '-' + str(season+1))
+                for season in range(1999, 2016): 
+                    print '\tSM-LIIGA ' + str(season) + '-' + str(season+1) + ': ',
+                    money_left, matches = runner.play(INITIAL_MONEY, ESTIMATOR, BETTING_STRATEGY, league=u'SM-LIIGA', season=str(season) + '-' + str(season+1))
                     print money_left
                     winnings.append(money_left - INITIAL_MONEY)
                 print 'TOTAL:', sum(winnings)
@@ -100,13 +100,13 @@ if __name__ == '__main__':
                 winnings = list(sorted(winnings))
                 print 'winnings:', winnings
                 population[idx][0]['winnings'] = winnings
-                population[idx][1] = sum(winnings[:3])
+                population[idx][1] = sum(winnings[:len(winnings)/2])
             
-            print 'SUM OF SMALLEST THREE:', population[idx][1]
+            print 'SUM OF WORST HALF:', population[idx][1]
 
 
         # Write population to file.
-        with open('populations/' + time.strftime('%Y-%m-%d_%H:%M:%s') + '.pickle', 'wb') as f:
+        with open('populations_sm-liiga/' + time.strftime('%Y-%m-%d_%H:%M:%s') + '.pickle', 'wb') as f:
             pickle.dump(population, f)
 
         # Remove the worst 50 percent.

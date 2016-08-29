@@ -311,7 +311,7 @@ def poisson(home_team, away_team, date, season=None, league=None):
 
     return result
 
-
+'''
 HISTORY_IN_WEEKS = 104
 START_WEIGHT = 0.5
 END_WEIGHT = 1.0
@@ -319,6 +319,15 @@ OVER_POWER_THRESHOLD = 1.5
 OVER_POWER_EXTRA = 0.07
 CLOSE_MATCH_THRESHOLD = 0.1
 CLOSE_MATCH_TRIM = 0.02
+'''
+HISTORY_IN_WEEKS = 109
+START_WEIGHT = 0.26845183747363105
+END_WEIGHT = 0.5087660101221416
+OVER_POWER_THRESHOLD = 1.61868158875048
+OVER_POWER_EXTRA = 0.1154001710943926
+CLOSE_MATCH_THRESHOLD = 0.22632442451841667
+CLOSE_MATCH_TRIM = 0.04303122029883997
+
 def direct(home_team, away_team, date, season=None, league=None, 
            history_in_weeks=None, start_weight=None, end_weight=None,
            over_power_threshold=None, over_power_extra=None,

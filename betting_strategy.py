@@ -5,7 +5,7 @@ MIN_BET = 1
 def kelly_div_10(all_money, probability_1, odd_1, probability_X, odd_X, probability_2, odd_2):
     
     if probability_1 and odd_1 - 1/probability_1 > 0:
-        result_1 = all_money * min(0.1, ((probability_1 * odd_1) / (odd_1 - 1))/10)
+        result_1 = all_money * min(0.1, ((probability_1 * odd_1) / (odd_1 - 1))/10) # MAX 10% of all money
         
         if result_1 < MIN_BET:
             result_1 = 0
@@ -13,7 +13,7 @@ def kelly_div_10(all_money, probability_1, odd_1, probability_X, odd_X, probabil
         result_1 = 0
         
     if probability_X and odd_X - 1/probability_X > 0:
-        result_X = all_money * min(0.1, ((probability_X * odd_X) / (odd_X - 1))/10)
+        result_X = all_money * min(0.1, ((probability_X * odd_X) / (odd_X - 1))/10) # MAX 10% of all money
         
         if result_X < MIN_BET:
             result_X = 0
@@ -21,7 +21,7 @@ def kelly_div_10(all_money, probability_1, odd_1, probability_X, odd_X, probabil
         result_X = 0
 
     if probability_2 and odd_2 - 1/probability_2 > 0:
-        result_2 = all_money * min(0.1, ((probability_2 * odd_2) / (odd_2 - 1))/10)
+        result_2 = all_money * min(0.1, ((probability_2 * odd_2) / (odd_2 - 1))/10) # MAX 10% of all money
         
         if result_2 < MIN_BET:
             result_2 = 0
