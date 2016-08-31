@@ -4,7 +4,7 @@ import os
 import pickle
 
 main_folder = os.path.dirname(os.path.abspath(__file__))
-populations_folder = os.path.join(main_folder, 'populations_khl')
+populations_folder = os.path.join(main_folder, 'populations_sm-liiga')
 
 files = [f for f in os.listdir(populations_folder) if f.endswith('.pickle')]
 files.sort()

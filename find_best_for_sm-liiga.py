@@ -20,33 +20,77 @@ def median(lst):
         
 def get_random_object():
     obj = {
-        'history_in_weeks': random.randint(10, 150),
-        'start_weight': random.random(), # 0.0-1.0
-        'end_weight': random.uniform(0.5, 1.0), # 0.5-1.0
+        # home team home matches
+        'home_team_home_match_percentages_history_length_in_matches': random.randint(10, 150),
+        'home_team_home_match_percentages_start_weight': random.random(),
+        'home_team_home_match_percentages_end_weight': random.uniform(0.5, 1.0),
+        'home_team_home_match_weight': random.random(),
+    
+        # home team matches
+        'home_team_match_percentages_history_length_in_matches': random.randint(10, 150),
+        'home_team_match_percentages_start_weight': random.random(),
+        'home_team_match_percentages_end_weight': random.uniform(0.5, 1.0),
+        'home_team_match_weight': random.random(),
+        
+        # away team away matches
+        'away_team_away_match_percentages_history_length_in_matches': random.randint(10, 150),
+        'away_team_away_match_percentages_start_weight': random.random(),
+        'away_team_away_match_percentages_end_weight': random.uniform(0.5, 1.0),
+        'away_team_away_match_weight': random.random(),
+        
+        # away team matches
+        'away_team_match_percentages_history_length_in_matches': random.randint(10, 150),
+        'away_team_match_percentages_start_weight': random.random(),
+        'away_team_match_percentages_end_weight': random.uniform(0.5, 1.0),
+        'away_team_match_weight': random.random(),
+        
+        # minimum allowed numbers of games
+        'minimum_home_team_home_matches_count': random.randint(2, 40),
+        'minimum_home_team_matches_count': random.randint(2, 40),
+        'minimum_away_team_away_matches_count': random.randint(2, 40),
+        'minimum_away_team_matches_count': random.randint(2, 40),
+        
+        # common 1X2 percentages
+        'common_1X2_match_percentages_history_length_in_matches': random.randint(10, 150),
+        'common_1X2_match_percentages_start_weight': random.random(),
+        'common_1X2_match_percentages_end_weight': random.uniform(0.5, 1.0),
+        'common_1X2_match_weight': random.random(),
+        
+        # over power fix
         'over_power_threshold': random.randint(1,4) + random.random(), # 1.0-5.0
-        'over_power_extra': random.uniform(0.0, 0.2), # 0.0-0.2
-        'close_match_threshold': random.uniform(0.0, 0.5), # 0.0-0.5
-        'close_match_trim': random.uniform(0.0, 0.4) # 0.0-0.4
+        'over_power_multiplier': random.random(),
+        
+        # close match fix
+        'close_match_threshold': 1 + random.random(),
+        'close_match_multiplier': random.random(),
+        'close_match_extra': random.randint(0, 30)
+
     }
     
-    if obj['end_weight'] < obj['start_weight']:
-        obj['end_weight'] = 1.0
+    if obj['home_team_home_match_percentages_end_weight'] < obj['home_team_home_match_percentages_start_weight']:
+        obj['home_team_home_match_percentages_end_weight'] = 1.0
+    if obj['home_team_match_percentages_end_weight'] < obj['home_team_match_percentages_start_weight']:
+        obj['home_team_match_percentages_end_weight'] = 1.0
+    if obj['away_team_away_match_percentages_end_weight'] < obj['away_team_away_match_percentages_start_weight']:
+        obj['away_team_away_match_percentages_end_weight'] = 1.0
+    if obj['away_team_match_percentages_end_weight'] < obj['away_team_match_percentages_start_weight']:
+        obj['away_team_match_percentages_end_weight'] = 1.0
         
+    obj['minimum_home_team_home_matches_count'] = min(obj['minimum_home_team_home_matches_count'], obj['home_team_home_match_percentages_history_length_in_matches'])
+    obj['minimum_home_team_matches_count'] = min(obj['minimum_home_team_matches_count'], obj['home_team_match_percentages_history_length_in_matches'])
+    obj['minimum_away_team_away_matches_count'] = min(obj['minimum_away_team_away_matches_count'], obj['away_team_away_match_percentages_history_length_in_matches'])
+    obj['minimum_away_team_matches_count'] = min(obj['minimum_away_team_matches_count'], obj['away_team_match_percentages_history_length_in_matches'])
+    
     return obj
         
+        
 if __name__ == '__main__':
-#    play(1000, league='Veikkausliiga', season='2015', start='2015-08-01')
-    
-#    veikkausliiga_poisson = play(1000, estimator.poisson, betting_strategy.kelly_div_10, league=u'Veikkausliiga', start='2010-01-01')
-#    veikkausliiga_my_simple = play(1000, estimator.simple_estimation, betting_strategy.kelly_div_10, league=u'Veikkausliiga', start='2010-01-01')
         
     INITIAL_MONEY = 1000
     
-    POPULATION_SIZE = 4
-    MUTATION_FREQUENCY = 100 # percentages of new objects mutated
+    POPULATION_SIZE = 100
+    MUTATION_FREQUENCY = 0.05 # 0.0-1.0 probability for new gene to be mutated
     
-    ESTIMATOR = estimator_module.direct
-
     BETTING_STRATEGY = betting_strategy.div_100 # betting_strategy.kelly_div_10, betting_strategy.div_10, betting_strategy.div_100, betting_strategy.bet_2, betting_strategy.bet_10
 
     # Load or create the initial population.
@@ -81,20 +125,19 @@ if __name__ == '__main__':
                 ukko = elem[0]
                 print ukko
             
-                estimator_module.HISTORY_IN_WEEKS = ukko['history_in_weeks']
-                estimator_module.START_WEIGHT = ukko['start_weight']
-                estimator_module.END_WEIGHT = ukko['end_weight']
-                estimator_module.OVER_POWER_THRESHOLD = ukko['over_power_threshold']
-                estimator_module.OVER_POWER_EXTRA = ukko['over_power_extra']
-                estimator_module.CLOSE_MATCH_THRESHOLD = ukko['close_match_threshold']
-                estimator_module.CLOSE_MATCH_TRIM = ukko['close_match_trim']
+                estimator = estimator_module.get_parameterized_estimator(ukko)
                 
                 winnings = []
                 for season in range(1999, 2016): 
                     print '\tSM-LIIGA ' + str(season) + '-' + str(season+1) + ': ',
-                    money_left, matches = runner.play(INITIAL_MONEY, ESTIMATOR, BETTING_STRATEGY, league=u'SM-LIIGA', season=str(season) + '-' + str(season+1))
+                    money_left, matches = runner.play(INITIAL_MONEY, estimator, BETTING_STRATEGY, league=u'SM-LIIGA', season=str(season) + '-' + str(season+1))
                     print money_left
-                    winnings.append(money_left - INITIAL_MONEY)
+                    
+                    if money_left == INITIAL_MONEY:
+                        # No bets made
+                        winnings.append(-1000)
+                    else:
+                        winnings.append(money_left - INITIAL_MONEY)
                 print 'TOTAL:', sum(winnings)
                 
                 winnings = list(sorted(winnings))
@@ -121,59 +164,79 @@ if __name__ == '__main__':
                 population[random.randint(0,len(population)-1)]
             ]
             
+            keys = [
+                'home_team_home_match_percentages_history_length_in_matches', 
+                'home_team_home_match_percentages_start_weight',
+                'home_team_home_match_percentages_end_weight',
+                'home_team_home_match_weight',
+                'home_team_match_percentages_history_length_in_matches',
+                'home_team_match_percentages_start_weight',
+                'home_team_match_percentages_end_weight',
+                'home_team_match_weight',
+                'away_team_away_match_percentages_history_length_in_matches',
+                'away_team_away_match_percentages_start_weight',
+                'away_team_away_match_percentages_end_weight',
+                'away_team_away_match_weight',
+                'away_team_match_percentages_history_length_in_matches',
+                'away_team_match_percentages_start_weight',
+                'away_team_match_percentages_end_weight',
+                'away_team_match_weight',
+                'minimum_home_team_home_matches_count',
+                'minimum_home_team_matches_count',
+                'minimum_away_team_away_matches_count',
+                'minimum_away_team_matches_count',
+                'common_1X2_match_percentages_history_length_in_matches',
+                'common_1X2_match_percentages_start_weight',
+                'common_1X2_match_percentages_end_weight',
+                'common_1X2_match_weight',
+                'over_power_threshold',
+                'over_power_multiplier',
+                'close_match_threshold',
+                'close_match_multiplier',
+                'close_match_extra'
+            ]
+            
+            mean_pseudo_parent_obj = {}
+            for key in keys:
+                mean_pseudo_parent_obj[key] = (parents[0][0][key] + parents[1][0][key])/2
+            
             mean_pseudo_parent = [
-                {
-                    'history_in_weeks': (parents[0][0]['history_in_weeks'] + parents[1][0]['history_in_weeks'])/2,
-                    'start_weight': (parents[0][0]['start_weight'] + parents[1][0]['start_weight'])/2,
-                    'end_weight': (parents[0][0]['end_weight'] + parents[1][0]['end_weight'])/2,
-                    'over_power_threshold': (parents[0][0]['over_power_threshold'] + parents[1][0]['over_power_threshold'])/2,
-                    'over_power_extra': (parents[0][0]['over_power_extra'] + parents[1][0]['over_power_extra'])/2,
-                    'close_match_threshold': (parents[0][0]['close_match_threshold'] + parents[1][0]['close_match_threshold'])/2,
-                    'close_match_trim': (parents[0][0]['close_match_trim'] + parents[1][0]['close_match_trim'])/2
-                }, 
+                mean_pseudo_parent_obj, 
                 None
             ]
             
             parents.append(mean_pseudo_parent)
             
+            offspring_obj = {}
+            for key in keys:
+                offspring_obj[key] = parents[random.randint(0, 2)][0][key]
             offspring = [
-                {
-                    'history_in_weeks': parents[random.randint(0, 2)][0]['history_in_weeks'],
-                    'start_weight': parents[random.randint(0, 2)][0]['start_weight'],
-                    'end_weight': parents[random.randint(0, 2)][0]['end_weight'],
-                    'over_power_threshold': parents[random.randint(0, 2)][0]['over_power_threshold'],
-                    'over_power_extra': parents[random.randint(0, 2)][0]['over_power_extra'],
-                    'close_match_threshold': parents[random.randint(0, 2)][0]['close_match_threshold'],
-                    'close_match_trim': parents[random.randint(0, 2)][0]['close_match_trim']
-                },
+                offspring_obj,
                 None
             ]
             
             # Make mutations. Maybe...
-            is_mutate = (random.randint(1,100) <= MUTATION_FREQUENCY)
-            if is_mutate:
-                mutatable_genes = ['history_in_weeks', 'start_weight', 'end_weight', 'over_power_threshold', 'over_power_extra', 'close_match_threshold', 'close_match_trim']
-                mutated_gene = mutatable_genes[random.randint(0, len(mutatable_genes)-1)]
-                
-                if mutated_gene == 'history_in_weeks':
-                    offspring[0]['history_in_weeks'] = random.randint(10, 150)
-                elif mutated_gene == 'start_weight':
-                    offspring[0]['start_weight'] = random.random() # 0.0-1.0
-                elif mutated_gene == 'end_weight':
-                    offspring[0]['end_weight'] = random.uniform(0.5, 1.0) # 0.5-1.0
-                elif mutated_gene == 'over_power_threshold':
-                    offspring[0]['over_power_threshold'] = random.randint(1,4) + random.random() # 1.0-5.0
-                elif mutated_gene == 'over_power_extra':
-                    offspring[0]['over_power_extra'] = random.uniform(0.0, 0.2) # 0.0-0.2
-                elif mutated_gene == 'close_match_threshold':
-                    offspring[0]['close_match_threshold'] = random.uniform(0.0, 0.5) # 0.0-0.5
-                elif mutated_gene == 'close_match_trim':
-                    offspring[0]['close_match_trim'] = random.uniform(0.0, 0.4) # 0.0-0.4
-                else:
-                    raise Exception('unrecognized gene ' + mutated_gene)
+            seed_obj = get_random_object()
+            for key in keys:
+                is_mutate = (random.random() < MUTATION_FREQUENCY)
+                if is_mutate:
+                    offspring[0][key] = seed_obj[key]
 
-            if offspring[0]['end_weight'] < offspring[0]['start_weight']:
-                offspring[0]['end_weight'] = 1.0
+            # Make some rationalizations.
+            
+            if offspring[0]['home_team_home_match_percentages_end_weight'] < offspring[0]['home_team_home_match_percentages_start_weight']:
+                offspring[0]['home_team_home_match_percentages_end_weight'] = 1.0
+            if offspring[0]['home_team_match_percentages_end_weight'] < offspring[0]['home_team_match_percentages_start_weight']:
+                offspring[0]['home_team_match_percentages_end_weight'] = 1.0
+            if offspring[0]['away_team_away_match_percentages_end_weight'] < offspring[0]['away_team_away_match_percentages_start_weight']:
+                offspring[0]['away_team_away_match_percentages_end_weight'] = 1.0
+            if offspring[0]['away_team_match_percentages_end_weight'] < offspring[0]['away_team_match_percentages_start_weight']:
+                offspring[0]['away_team_match_percentages_end_weight'] = 1.0
+
+            offspring[0]['minimum_home_team_home_matches_count'] = min(offspring[0]['minimum_home_team_home_matches_count'], offspring[0]['home_team_home_match_percentages_history_length_in_matches']),
+            offspring[0]['minimum_home_team_matches_count'] = min(offspring[0]['minimum_home_team_matches_count'], offspring[0]['home_team_match_percentages_history_length_in_matches']),
+            offspring[0]['minimum_away_team_away_matches_count'] = min(offspring[0]['minimum_away_team_away_matches_count'], offspring[0]['away_team_away_match_percentages_history_length_in_matches']),
+            offspring[0]['minimum_away_team_matches_count'] = min(offspring[0]['minimum_away_team_matches_count'], offspring[0]['away_team_match_percentages_history_length_in_matches']),
             
             offsprings.append(offspring)
 

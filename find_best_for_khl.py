@@ -20,7 +20,8 @@ def median(lst):
         
 def get_random_object():
     obj = {
-        'history_in_weeks': random.randint(10, 150),
+#        'history_in_weeks': random.randint(10, 150),
+        'history_in_matches': random.randint(10, 150),
         'start_weight': random.random(), # 0.0-1.0
         'end_weight': random.uniform(0.5, 1.0), # 0.5-1.0
         'over_power_threshold': random.randint(1,4) + random.random(), # 1.0-5.0
@@ -81,7 +82,8 @@ if __name__ == '__main__':
                 ukko = elem[0]
                 print ukko
             
-                estimator_module.HISTORY_IN_WEEKS = ukko['history_in_weeks']
+#                estimator_module.HISTORY_IN_WEEKS = ukko['history_in_weeks']
+                estimator_module.HISTORY_IN_MATCHES = ukko['history_in_matches']
                 estimator_module.START_WEIGHT = ukko['start_weight']
                 estimator_module.END_WEIGHT = ukko['end_weight']
                 estimator_module.OVER_POWER_THRESHOLD = ukko['over_power_threshold']
@@ -106,7 +108,7 @@ if __name__ == '__main__':
 
 
         # Write population to file.
-        with open('populations/' + time.strftime('%Y-%m-%d_%H:%M:%s') + '.pickle', 'wb') as f:
+        with open('populations_khl/' + time.strftime('%Y-%m-%d_%H:%M:%s') + '.pickle', 'wb') as f:
             pickle.dump(population, f)
 
         # Remove the worst 50 percent.
@@ -123,7 +125,8 @@ if __name__ == '__main__':
             
             mean_pseudo_parent = [
                 {
-                    'history_in_weeks': (parents[0][0]['history_in_weeks'] + parents[1][0]['history_in_weeks'])/2,
+#                    'history_in_weeks': (parents[0][0]['history_in_weeks'] + parents[1][0]['history_in_weeks'])/2,
+                    'history_in_matches': (parents[0][0]['history_in_matches'] + parents[1][0]['history_in_matches'])/2,
                     'start_weight': (parents[0][0]['start_weight'] + parents[1][0]['start_weight'])/2,
                     'end_weight': (parents[0][0]['end_weight'] + parents[1][0]['end_weight'])/2,
                     'over_power_threshold': (parents[0][0]['over_power_threshold'] + parents[1][0]['over_power_threshold'])/2,
@@ -138,7 +141,8 @@ if __name__ == '__main__':
             
             offspring = [
                 {
-                    'history_in_weeks': parents[random.randint(0, 2)][0]['history_in_weeks'],
+#                    'history_in_weeks': parents[random.randint(0, 2)][0]['history_in_weeks'],
+                    'history_in_matches': parents[random.randint(0, 2)][0]['history_in_matches'],
                     'start_weight': parents[random.randint(0, 2)][0]['start_weight'],
                     'end_weight': parents[random.randint(0, 2)][0]['end_weight'],
                     'over_power_threshold': parents[random.randint(0, 2)][0]['over_power_threshold'],
@@ -152,11 +156,14 @@ if __name__ == '__main__':
             # Make mutations. Maybe...
             is_mutate = (random.randint(1,100) <= MUTATION_FREQUENCY)
             if is_mutate:
-                mutatable_genes = ['history_in_weeks', 'start_weight', 'end_weight', 'over_power_threshold', 'over_power_extra', 'close_match_threshold', 'close_match_trim']
+#                mutatable_genes = ['history_in_weeks', 'start_weight', 'end_weight', 'over_power_threshold', 'over_power_extra', 'close_match_threshold', 'close_match_trim']
+                mutatable_genes = ['history_in_matches', 'start_weight', 'end_weight', 'over_power_threshold', 'over_power_extra', 'close_match_threshold', 'close_match_trim']
                 mutated_gene = mutatable_genes[random.randint(0, len(mutatable_genes)-1)]
                 
-                if mutated_gene == 'history_in_weeks':
-                    offspring[0]['history_in_weeks'] = random.randint(10, 150)
+#                if mutated_gene == 'history_in_weeks':
+#                    offspring[0]['history_in_weeks'] = random.randint(10, 150)
+                if mutated_gene == 'history_in_matches':
+                    offspring[0]['history_in_matches'] = random.randint(10, 150)
                 elif mutated_gene == 'start_weight':
                     offspring[0]['start_weight'] = random.random() # 0.0-1.0
                 elif mutated_gene == 'end_weight':

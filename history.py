@@ -160,7 +160,7 @@ def get_season_table(league, season):
     return reversed(sorted(result, key=lambda x: x[1]))
 
 
-def get_full_time_match_percentages_of_team(team, league=None, season=None, start=None, end=None, start_weight=None, end_weight=None):
+def get_full_time_match_percentages_of_team(team, league=None, season=None, start=None, end=None, start_weight=None, end_weight=None, number_of_matches=None):
     '''returns win%, draw%, loss%'''
 
     team_id = db.get_team_id(team)
@@ -177,6 +177,12 @@ def get_full_time_match_percentages_of_team(team, league=None, season=None, star
 
     matches = db.get_matches(team_id=team_id, season_id=season_id, league_id=league_id, start=start, end=end, cancelled=False, awarded=False)
     
+    if number_of_matches:
+        if len(matches) > number_of_matches:
+            matches.reverse()
+            matches = matches[:number_of_matches]
+            matches.reverse()
+    
     if start_weight is None or end_weight is None:
         num_of_games = len(matches)
         wins = 0
@@ -257,7 +263,7 @@ def get_full_time_match_percentages_of_team(team, league=None, season=None, star
                 losses/weight_sum,
                 len(matches))
 
-def get_full_time_home_match_percentages_of_team(team, league=None, season=None, start=None, end=None, start_weight=None, end_weight=None):
+def get_full_time_home_match_percentages_of_team(team, league=None, season=None, start=None, end=None, start_weight=None, end_weight=None, number_of_matches=None):
     '''returns win%, draw%, loss%'''
 
     team_id = db.get_team_id(team)
@@ -274,6 +280,12 @@ def get_full_time_home_match_percentages_of_team(team, league=None, season=None,
 
     matches = db.get_matches(home_team_id=team_id, season_id=season_id, league_id=league_id, start=start, end=end, cancelled=False, awarded=False)
    
+    if number_of_matches:
+        if len(matches) > number_of_matches:
+            matches.reverse()
+            matches = matches[:number_of_matches]
+            matches.reverse()
+
     if start_weight is None or end_weight is None:
         num_of_games = len(matches)
         wins = 0
@@ -325,7 +337,7 @@ def get_full_time_home_match_percentages_of_team(team, league=None, season=None,
                 len(matches))
     
     
-def get_full_time_away_match_percentages_of_team(team, league=None, season=None, start=None, end=None, start_weight=None, end_weight=None):
+def get_full_time_away_match_percentages_of_team(team, league=None, season=None, start=None, end=None, start_weight=None, end_weight=None, number_of_matches=None):
     '''returns win%, draw%, loss%'''
 
     team_id = db.get_team_id(team)
@@ -342,6 +354,12 @@ def get_full_time_away_match_percentages_of_team(team, league=None, season=None,
 
     matches = db.get_matches(away_team_id=team_id, season_id=season_id, league_id=league_id, start=start, end=end, cancelled=False, awarded=False)
        
+    if number_of_matches:
+        if len(matches) > number_of_matches:
+            matches.reverse()
+            matches = matches[:number_of_matches]
+            matches.reverse()
+
     if start_weight is None or end_weight is None:
         num_of_games = len(matches)
         wins = 0
@@ -393,7 +411,7 @@ def get_full_time_away_match_percentages_of_team(team, league=None, season=None,
                 len(matches))
     
 
-def get_full_time_1X2_percentages(league=None, season=None, start=None, end=None):
+def get_full_time_1X2_percentages(league=None, season=None, start=None, end=None, start_weight=None, end_weight=None, number_of_matches=None):
 
     if league:
         league_id = db.get_league_id(league)
@@ -406,25 +424,61 @@ def get_full_time_1X2_percentages(league=None, season=None, start=None, end=None
         season_id = None
 
     matches = db.get_matches(season_id=season_id, league_id=league_id, start=start, end=end, cancelled=False, awarded=False)
+
+    if number_of_matches:
+        if len(matches) > number_of_matches:
+            matches.reverse()
+            matches = matches[:number_of_matches]
+            matches.reverse()
     
-    num_of_matches = len(matches)
-    home_win = 0
-    draw = 0
-    away_win = 0
-    
-    for match in matches:
-        if match['full_time_home_team_goals'] > match['full_time_away_team_goals']:
-            home_win += 1
-        elif match['full_time_home_team_goals'] < match['full_time_away_team_goals']:
-            away_win += 1
+    if start_weight is None or end_weight is None:
+        num_of_matches = len(matches)
+        home_win = 0
+        draw = 0
+        away_win = 0
+        
+        for match in matches:
+            if match['full_time_home_team_goals'] > match['full_time_away_team_goals']:
+                home_win += 1
+            elif match['full_time_home_team_goals'] < match['full_time_away_team_goals']:
+                away_win += 1
+            else:
+                draw += 1
+                
+        if num_of_matches == 0:
+            return (0,0,0,0)
         else:
-            draw += 1
-            
-    if num_of_matches == 0:
-        return (0,0,0,0)
+            return (float(home_win)/num_of_matches,
+                    float(draw)/num_of_matches,
+                    float(away_win)/num_of_matches,
+                    num_of_matches)
     else:
-        return (float(home_win)/num_of_matches,
-                float(draw)/num_of_matches,
-                float(away_win)/num_of_matches,
-                num_of_matches)
+        if len(matches) == 0:
+            return (0,0,0,0)
+        
+        delta = (end_weight - start_weight)/len(matches)
+        weight_sum = 0.
+        
+        home_win = 0.
+        draw = 0.
+        away_win = 0.
+        
+        weight = start_weight
+        
+        for g in matches:
+            if g['full_time_home_team_goals'] > g['full_time_away_team_goals']:
+                home_win += weight
+            elif g['full_time_home_team_goals'] < g['full_time_away_team_goals']:
+                away_win += weight
+            else:
+                draw += weight
+                
+            weight_sum += weight
+                
+            weight += delta
+                
+        return (home_win/weight_sum,
+                draw/weight_sum,
+                away_win/weight_sum,
+                len(matches))
 

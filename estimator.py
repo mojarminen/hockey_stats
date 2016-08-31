@@ -311,6 +311,151 @@ def poisson(home_team, away_team, date, season=None, league=None):
 
     return result
 
+
+def get_parameterized_estimator(params):
+    
+    # home team home matches
+    home_team_home_match_percentages_history_length_in_matches = params['home_team_home_match_percentages_history_length_in_matches']
+    home_team_home_match_percentages_start_weight = params['home_team_home_match_percentages_start_weight']
+    home_team_home_match_percentages_end_weight = params['home_team_home_match_percentages_end_weight']
+    home_team_home_match_weight = params['home_team_home_match_weight']
+    
+    # home team matches
+    home_team_match_percentages_history_length_in_matches = params['home_team_match_percentages_history_length_in_matches']
+    home_team_match_percentages_start_weight = params['home_team_match_percentages_start_weight']
+    home_team_match_percentages_end_weight = params['home_team_match_percentages_end_weight']
+    home_team_match_weight = params['home_team_match_weight']
+    
+    # away team away matches
+    away_team_away_match_percentages_history_length_in_matches = params['away_team_away_match_percentages_history_length_in_matches']
+    away_team_away_match_percentages_start_weight = params['away_team_away_match_percentages_start_weight']
+    away_team_away_match_percentages_end_weight = params['away_team_away_match_percentages_end_weight']
+    away_team_away_match_weight = params['away_team_away_match_weight']
+    
+    # away team matches
+    away_team_match_percentages_history_length_in_matches = params['away_team_match_percentages_history_length_in_matches']
+    away_team_match_percentages_start_weight = params['away_team_match_percentages_start_weight']
+    away_team_match_percentages_end_weight = params['away_team_match_percentages_end_weight']
+    away_team_match_weight = params['away_team_match_weight']
+    
+    # minimum allowed numbers of games
+    minimum_home_team_home_matches_count = params['minimum_home_team_home_matches_count']
+    minimum_home_team_matches_count = params['minimum_home_team_matches_count']
+    minimum_away_team_away_matches_count = params['minimum_away_team_away_matches_count']
+    minimum_away_team_matches_count = params['minimum_away_team_matches_count']
+    
+    # common 1X2 percentages
+    common_1X2_match_percentages_history_length_in_matches = params['common_1X2_match_percentages_history_length_in_matches']
+    common_1X2_match_percentages_start_weight = params['common_1X2_match_percentages_start_weight']
+    common_1X2_match_percentages_end_weight = params['common_1X2_match_percentages_end_weight']
+    common_1X2_match_weight = params['common_1X2_match_weight']
+    
+    # over power fix
+    over_power_threshold = params['over_power_threshold']
+    over_power_multiplier = params['over_power_multiplier']
+    
+    # close match fix
+    close_match_threshold = params['close_match_threshold']
+    close_match_multiplier = params['close_match_multiplier']
+    close_match_extra = params['close_match_extra']
+    
+    # strain fix (how many games before the game)
+    # TODO
+    
+    def parameterized_estimator(home_team, away_team, date, season=None, league=None):
+        
+        h_h1, h_hX, h_h2, h_h_count = history.get_full_time_home_match_percentages_of_team(home_team, 
+                                                                                           league=league, 
+                                                                                           end=date, 
+                                                                                           start_weight=home_team_home_match_percentages_start_weight, 
+                                                                                           end_weight=home_team_home_match_percentages_end_weight,
+                                                                                           number_of_matches=home_team_home_match_percentages_history_length_in_matches)
+                                                                                           
+        h_m1, h_mX, h_m2, h_m_count = history.get_full_time_match_percentages_of_team(home_team, 
+                                                                                      league=league, 
+                                                                                      end=date, 
+                                                                                      start_weight=home_team_match_percentages_start_weight, 
+                                                                                      end_weight=home_team_match_percentages_end_weight,
+                                                                                      number_of_matches=home_team_match_percentages_history_length_in_matches)
+        
+        a_a2, a_aX, a_a1, a_a_count = history.get_full_time_away_match_percentages_of_team(away_team, 
+                                                                                           league=league, 
+                                                                                           end=date, 
+                                                                                           start_weight=away_team_away_match_percentages_start_weight, 
+                                                                                           end_weight=away_team_away_match_percentages_end_weight,
+                                                                                           number_of_matches=away_team_away_match_percentages_history_length_in_matches)
+                                                                                           
+        a_m2, a_mX, a_m1, a_m_count = history.get_full_time_match_percentages_of_team(away_team, 
+                                                                                      league=league, 
+                                                                                      end=date, 
+                                                                                      start_weight=away_team_match_percentages_start_weight, 
+                                                                                      end_weight=away_team_match_percentages_end_weight,
+                                                                                      number_of_matches=away_team_match_percentages_history_length_in_matches)
+        
+        c1, cX, c2, c_count = history.get_full_time_1X2_percentages(league=league, 
+                                                                    end=date,
+                                                                    start_weight=common_1X2_match_percentages_start_weight,
+                                                                    end_weight=common_1X2_match_percentages_end_weight,
+                                                                    number_of_matches=common_1X2_match_percentages_history_length_in_matches)
+
+        if (h_h_count < minimum_home_team_home_matches_count 
+                or a_a_count < minimum_away_team_away_matches_count 
+                or h_m_count < minimum_home_team_matches_count 
+                or a_m_count < minimum_away_team_matches_count):
+            return None
+
+        result = {}
+
+        result['1'] = float(
+                        h_h1*home_team_home_match_weight + 
+                        h_m1*home_team_match_weight + 
+                        a_a1*away_team_away_match_weight + 
+                        a_m1*away_team_match_weight + 
+                        c1*common_1X2_match_weight
+                      )/(home_team_home_match_weight + home_team_match_weight + away_team_away_match_weight + away_team_match_weight + common_1X2_match_weight)
+        result['X'] = float(
+                        h_hX*home_team_home_match_weight + 
+                        h_mX*home_team_match_weight + 
+                        a_aX*away_team_away_match_weight + 
+                        a_mX*away_team_match_weight + 
+                        cX*common_1X2_match_weight
+                      )/(home_team_home_match_weight + home_team_match_weight + away_team_away_match_weight + away_team_match_weight + common_1X2_match_weight)
+        result['2'] = float(
+                        h_h2*home_team_home_match_weight + 
+                        h_m2*home_team_match_weight + 
+                        a_a2*away_team_away_match_weight + 
+                        a_m2*away_team_match_weight + 
+                        c2*common_1X2_match_weight
+                      )/(home_team_home_match_weight + home_team_match_weight + away_team_away_match_weight + away_team_match_weight + common_1X2_match_weight)
+        
+        # Fix probabilities based on the nature of the game.
+        
+        # Over power
+        if result['1']/result['2'] > over_power_threshold:
+            extra = (result['1']/result['2'])* over_power_multiplier
+            result['1'] += extra
+            result['2'] -= extra
+        elif result['2']/result['1'] > over_power_threshold:
+            extra = (result['2']/result['1'])* over_power_multiplier
+            result['2'] += extra
+            result['1'] -= extra
+
+        # Close match
+        if result['1']/result['2'] < (close_match_threshold) and result['2']/result['1'] < (close_match_threshold): # close_match_threshold should be a little over 1
+            if result['1'] > result['2']:
+                extra = (result['2']/result['1']) * close_match_multiplier * close_match_extra
+            else:
+                extra = (result['1']/result['2']) * close_match_multiplier * close_match_extra
+                
+            result['1'] -= extra/2.
+            result['2'] -= extra/2.
+            result['X'] += extra
+        
+        return result
+    
+    return parameterized_estimator
+    
+
 '''
 HISTORY_IN_WEEKS = 104
 START_WEIGHT = 0.5
@@ -321,6 +466,8 @@ CLOSE_MATCH_THRESHOLD = 0.1
 CLOSE_MATCH_TRIM = 0.02
 '''
 HISTORY_IN_WEEKS = 109
+#HISTORY_IN_MATCHES = 30
+HISTORY_IN_MATCHES = None
 START_WEIGHT = 0.26845183747363105
 END_WEIGHT = 0.5087660101221416
 OVER_POWER_THRESHOLD = 1.61868158875048
@@ -328,43 +475,35 @@ OVER_POWER_EXTRA = 0.1154001710943926
 CLOSE_MATCH_THRESHOLD = 0.22632442451841667
 CLOSE_MATCH_TRIM = 0.04303122029883997
 
-def direct(home_team, away_team, date, season=None, league=None, 
-           history_in_weeks=None, start_weight=None, end_weight=None,
-           over_power_threshold=None, over_power_extra=None,
-           close_match_threshold=None, close_match_trim=None):
+def direct(home_team, away_team, date, season=None, league=None):
     
-    global HISTORY_IN_WEEKS, START_WEIGHT, END_WEIGHT, OVER_POWER_THRESHOLD, OVER_POWER_EXTRA, CLOSE_MATCH_THRESHOLD, CLOSE_MATCH_TRIM
+    global HISTORY_IN_WEEKS, START_WEIGHT, END_WEIGHT, OVER_POWER_THRESHOLD, OVER_POWER_EXTRA, CLOSE_MATCH_THRESHOLD, CLOSE_MATCH_TRIM, HISTORY_IN_MATCHES
     
-    if history_in_weeks:
-        HISTORY_IN_WEEKS = history_in_weeks
-    
-    if start_weight:
-        START_WEIGHT = start_weight
-        
-    if end_weight:
-        END_WEIGHT = end_weight
+    if HISTORY_IN_WEEKS:
+        year, month, day = [int(d) for d in date.split('-')]
+        start = datetime.date(year, month, day) + datetime.timedelta(weeks=-HISTORY_IN_WEEKS)
+        start = start.strftime('%Y-%m-%d')
+    else:
+        start = None
 
-    if over_power_threshold:
-        OVER_POWER_THRESHOLD = over_power_threshold
+    if HISTORY_IN_MATCHES:
+        half_of_matches = HISTORY_IN_MATCHES/2
+    else:
+        half_of_matches = None
         
-    if over_power_extra:
-        OVER_POWER_EXTRA = over_power_extra
-        
-    if close_match_threshold:
-        CLOSE_MATCH_THRESHOLD = close_match_threshold
-        
-    if close_match_trim:
-        CLOSE_MATCH_TRIM = close_match_trim
-
-    year, month, day = [int(d) for d in date.split('-')]
-    start = datetime.date(year, month, day) + datetime.timedelta(weeks=-HISTORY_IN_WEEKS)
-    start = start.strftime('%Y-%m-%d')
-
-    h_h1, h_hX, h_h2, h_h_count = history.get_full_time_home_match_percentages_of_team(home_team, league=league, season=None, start=start, end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT)
-    h_m1, h_mX, h_m2, h_m_count = history.get_full_time_match_percentages_of_team(home_team, league=league, season=None, start=start, end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT)
+    h_h1, h_hX, h_h2, h_h_count = history.get_full_time_home_match_percentages_of_team(home_team, league=league, season=None, start=start, 
+                                                                                       end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT,
+                                                                                       number_of_matches=half_of_matches)
+    h_m1, h_mX, h_m2, h_m_count = history.get_full_time_match_percentages_of_team(home_team, league=league, season=None, start=start, 
+                                                                                  end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT,
+                                                                                  number_of_matches=HISTORY_IN_MATCHES)
     
-    a_a2, a_aX, a_a1, a_a_count = history.get_full_time_away_match_percentages_of_team(away_team, league=league, season=None, start=start, end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT)
-    a_m2, a_mX, a_m1, a_m_count = history.get_full_time_match_percentages_of_team(away_team, league=league, season=None, start=start, end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT)
+    a_a2, a_aX, a_a1, a_a_count = history.get_full_time_away_match_percentages_of_team(away_team, league=league, season=None, start=start, 
+                                                                                       end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT,
+                                                                                       number_of_matches=half_of_matches)
+    a_m2, a_mX, a_m1, a_m_count = history.get_full_time_match_percentages_of_team(away_team, league=league, season=None, start=start, 
+                                                                                  end=date, start_weight=START_WEIGHT, end_weight=END_WEIGHT,
+                                                                                  number_of_matches=HISTORY_IN_MATCHES)
     
     c1, cX, c2, c_count = history.get_full_time_1X2_percentages(league=league, start=start, end=date)
 
