@@ -105,6 +105,15 @@ if __name__ == '__main__':
             print 'Poisson'
         else:
             raise Exception('unrecognised estimator')
+
+        '''
+        winnings_nhl = 0
+        for season in range(2007, 2017): 
+            print '\tNHL ' + str(season) + '-' + str(season+1) + ': ',
+            money_left, matches = play(INITIAL_MONEY, get_estimations, get_bet, league=u'NHL', season=str(season) + '-' + str(season+1))
+            print money_left
+            winnings_nhl += (money_left - INITIAL_MONEY)
+        print 'TOTAL:', winnings_nhl
         
         winnings_liiga = 0
         for season in range(1998, 2017): 
@@ -113,7 +122,7 @@ if __name__ == '__main__':
             print money_left
             winnings_liiga += (money_left - INITIAL_MONEY)
         print 'TOTAL:', winnings_liiga
-
+        '''
         winnings_khl = 0
         for season in range(2009, 2017): 
             print '\tKHL ' + str(season) + '-' + str(season+1) + ': ',

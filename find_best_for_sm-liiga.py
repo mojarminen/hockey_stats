@@ -103,7 +103,18 @@ if __name__ == '__main__':
         while len(population) < POPULATION_SIZE:
             population.append([get_random_object(), None])
 
-        if sys.argv[2] == 'reset':
+        # Some fixes to incorrectly stored objects.
+        for obj in population:
+            if type(obj[0]['minimum_home_team_home_matches_count']) is tuple:
+                obj[0]['minimum_home_team_home_matches_count'] = obj[0]['minimum_home_team_home_matches_count'][0]
+            if type(obj[0]['minimum_home_team_matches_count']) is tuple:
+                obj[0]['minimum_home_team_matches_count'] = obj[0]['minimum_home_team_matches_count'][0]
+            if type(obj[0]['minimum_away_team_away_matches_count']) is tuple:
+                obj[0]['minimum_away_team_away_matches_count'] = obj[0]['minimum_away_team_away_matches_count'][0]
+            if type(obj[0]['minimum_away_team_matches_count']) is tuple:
+                obj[0]['minimum_away_team_matches_count'] = obj[0]['minimum_away_team_matches_count'][0]
+
+        if len(sys.argv) > 2 and sys.argv[2] == 'reset':
             print 'RESETTING...'
             for idx in range(len(population)):
                 population[idx][1] = None
@@ -233,10 +244,10 @@ if __name__ == '__main__':
             if offspring[0]['away_team_match_percentages_end_weight'] < offspring[0]['away_team_match_percentages_start_weight']:
                 offspring[0]['away_team_match_percentages_end_weight'] = 1.0
 
-            offspring[0]['minimum_home_team_home_matches_count'] = min(offspring[0]['minimum_home_team_home_matches_count'], offspring[0]['home_team_home_match_percentages_history_length_in_matches']),
-            offspring[0]['minimum_home_team_matches_count'] = min(offspring[0]['minimum_home_team_matches_count'], offspring[0]['home_team_match_percentages_history_length_in_matches']),
-            offspring[0]['minimum_away_team_away_matches_count'] = min(offspring[0]['minimum_away_team_away_matches_count'], offspring[0]['away_team_away_match_percentages_history_length_in_matches']),
-            offspring[0]['minimum_away_team_matches_count'] = min(offspring[0]['minimum_away_team_matches_count'], offspring[0]['away_team_match_percentages_history_length_in_matches']),
+            offspring[0]['minimum_home_team_home_matches_count'] = min(offspring[0]['minimum_home_team_home_matches_count'], offspring[0]['home_team_home_match_percentages_history_length_in_matches'])
+            offspring[0]['minimum_home_team_matches_count'] = min(offspring[0]['minimum_home_team_matches_count'], offspring[0]['home_team_match_percentages_history_length_in_matches'])
+            offspring[0]['minimum_away_team_away_matches_count'] = min(offspring[0]['minimum_away_team_away_matches_count'], offspring[0]['away_team_away_match_percentages_history_length_in_matches'])
+            offspring[0]['minimum_away_team_matches_count'] = min(offspring[0]['minimum_away_team_matches_count'], offspring[0]['away_team_match_percentages_history_length_in_matches'])
             
             offsprings.append(offspring)
 
