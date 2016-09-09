@@ -44,7 +44,7 @@ if __name__ == '__main__':
     INITIAL_MONEY = 1000
     
     POPULATION_SIZE = 100
-    MUTATION_FREQUENCY = 20 # percentages of new objects mutated
+    MUTATION_FREQUENCY = 0.01 # percentages of new objects mutated
     
     ESTIMATOR = estimator_module.direct
 
@@ -154,30 +154,26 @@ if __name__ == '__main__':
             ]
             
             # Make mutations. Maybe...
-            is_mutate = (random.randint(1,100) <= MUTATION_FREQUENCY)
-            if is_mutate:
-#                mutatable_genes = ['history_in_weeks', 'start_weight', 'end_weight', 'over_power_threshold', 'over_power_extra', 'close_match_threshold', 'close_match_trim']
-                mutatable_genes = ['history_in_matches', 'start_weight', 'end_weight', 'over_power_threshold', 'over_power_extra', 'close_match_threshold', 'close_match_trim']
-                mutated_gene = mutatable_genes[random.randint(0, len(mutatable_genes)-1)]
-                
-#                if mutated_gene == 'history_in_weeks':
-#                    offspring[0]['history_in_weeks'] = random.randint(10, 150)
-                if mutated_gene == 'history_in_matches':
-                    offspring[0]['history_in_matches'] = random.randint(10, 150)
-                elif mutated_gene == 'start_weight':
-                    offspring[0]['start_weight'] = random.random() # 0.0-1.0
-                elif mutated_gene == 'end_weight':
-                    offspring[0]['end_weight'] = random.uniform(0.5, 1.0) # 0.5-1.0
-                elif mutated_gene == 'over_power_threshold':
-                    offspring[0]['over_power_threshold'] = random.randint(1,4) + random.random() # 1.0-5.0
-                elif mutated_gene == 'over_power_extra':
-                    offspring[0]['over_power_extra'] = random.uniform(0.0, 0.2) # 0.0-0.2
-                elif mutated_gene == 'close_match_threshold':
-                    offspring[0]['close_match_threshold'] = random.uniform(0.0, 0.5) # 0.0-0.5
-                elif mutated_gene == 'close_match_trim':
-                    offspring[0]['close_match_trim'] = random.uniform(0.0, 0.4) # 0.0-0.4
-                else:
-                    raise Exception('unrecognized gene ' + mutated_gene)
+            mutatable_genes = ['history_in_matches', 'start_weight', 'end_weight', 'over_power_threshold', 'over_power_extra', 'close_match_threshold', 'close_match_trim']
+            for mutated_gene in mutatable_genes:
+                is_mutate = (random.random() <= MUTATION_FREQUENCY)
+                if is_mutate:
+                    if mutated_gene == 'history_in_matches':
+                        offspring[0]['history_in_matches'] = random.randint(10, 150)
+                    elif mutated_gene == 'start_weight':
+                        offspring[0]['start_weight'] = random.random() # 0.0-1.0
+                    elif mutated_gene == 'end_weight':
+                        offspring[0]['end_weight'] = random.uniform(0.5, 1.0) # 0.5-1.0
+                    elif mutated_gene == 'over_power_threshold':
+                        offspring[0]['over_power_threshold'] = random.randint(1,4) + random.random() # 1.0-5.0
+                    elif mutated_gene == 'over_power_extra':
+                        offspring[0]['over_power_extra'] = random.uniform(0.0, 0.2) # 0.0-0.2
+                    elif mutated_gene == 'close_match_threshold':
+                        offspring[0]['close_match_threshold'] = random.uniform(0.0, 0.5) # 0.0-0.5
+                    elif mutated_gene == 'close_match_trim':
+                        offspring[0]['close_match_trim'] = random.uniform(0.0, 0.4) # 0.0-0.4
+                    else:
+                        raise Exception('unrecognized gene ' + mutated_gene)
 
             if offspring[0]['end_weight'] < offspring[0]['start_weight']:
                 offspring[0]['end_weight'] = 1.0

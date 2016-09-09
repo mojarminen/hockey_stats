@@ -386,6 +386,7 @@ TEAM_ALIASES = {
     'HC Lev': 'Lev Poprad',
     'HC Yugra': 'Yugra Khanty-Mansiysk',
     'Khimik': 'Khimik Voskresensk',
+    'Kunlun': 'Kunlun Red Star',
     'Lada': 'Lada Togliatti',
     'MVD Balashikha': 'HC MVD',
     'Nizhny Novgorod': 'Torpedo Nizhny Novgorod',
